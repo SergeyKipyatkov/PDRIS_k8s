@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filling-service
+  labels:
+    app: filling-service
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: filling-service
+  template:
+    metadata:
+      labels:
+        app: filling-service
+    spec:
+      containers:
+        - name: filling-service
+          image: sergeykipyatkov/filling-service
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MONGO_URL
+              value: mongodb://mongo:27017/dev
+          imagePullPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: filling-service
+spec:
+  selector:
+    app: filling-service
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: LoadBalancer
